@@ -1,26 +1,71 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-primary: #0A0A09;
+  --bg-surface: #141312;
+  --border-surface: #26231F;
+  --bg-editorial: #EFE4D4;
+  --brand-gold: #C48F56;
+  --brand-gold-hover: #D4A16A;
+  --brand-olive: #463F32;
+  --text-primary: #F5F0E8;
+  --text-muted: #A39B8F;
+  --border-hairline: rgba(239, 228, 212, 0.15);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-obsidian: #0A0A09;
+  --color-surface: #141312;
+  --color-surface-border: #26231F;
+  --color-champagne: #EFE4D4;
+  --color-gold: #C48F56;
+  --color-gold-hover: #D4A16A;
+  --color-olive: #463F32;
+  --color-ivory: #F5F0E8;
+  --color-taupe: #A39B8F;
+  --font-display: var(--font-montserrat), sans-serif;
+  --font-sans: var(--font-jakarta), sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  background-color: #0A0A09;
+  color: #F5F0E8;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #0A0A09;
+  color: #F5F0E8;
+  font-family: var(--font-jakarta), -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle tactile paper-grain texture inspired by luxury packaging */
+.jagwar-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.65'/%3E%3C/svg%3E");
+}
+
+/* Custom subtle scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0A09;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #26231F;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #463F32;
+}
+
+/* Custom selection styling */
+::selection {
+  background-color: rgba(196, 143, 86, 0.28);
+  color: #F5F0E8;
 }

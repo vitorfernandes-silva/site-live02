@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import WhatsAppFloat from "@/components/ui/whatsapp-float";
 
 export const metadata: Metadata = {
   title: "JAGWAR Performance & Growth — Assessoria para E-commerces de Moda",
@@ -15,7 +16,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" className="antialiased">
-      <body>{children}</body>
+      <body>
+        {children}
+        <WhatsAppFloat />
+      </body>
     </html>
   );
 }

@@ -25,8 +25,36 @@
 // product mocks, the tree) and nothing loads at runtime. Requires `gsap`.
 import * as React from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import {
+  BadgeDollarSign,
+  BarChart3,
+  CalendarCheck,
+  CheckCircle2,
+  Clapperboard,
+  Crown,
+  FlaskConical,
+  Gauge,
+  Image as ImageIcon,
+  LayoutDashboard,
+  LayoutTemplate,
+  Mail,
+  MessageCircle,
+  Percent,
+  Repeat,
+  Rocket,
+  Search,
+  ShoppingBag,
+  Sparkles,
+  Store,
+  Target,
+  TrendingUp,
+  Users,
+} from "lucide-react"
+import GlassmorphismCta from "@/components/ui/glassmorphism-cta"
+import { WhatsAppIcon, buildWhatsAppUrl } from "@/components/ui/whatsapp-float"
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger)
 
@@ -55,6 +83,10 @@ export type OvsCase = {
   metricLabel: string
   year: string
   mock?: OvsMock
+  image?: string
+  badge?: string
+  icon?: "affiliates" | "creators" | "os"
+  imagePos?: string
   /** Two colours for the card's backdrop. */
   tint?: [string, string]
   href?: string
@@ -145,8 +177,8 @@ export interface OverstoryStudioLandingProps {
 // #region content
 const DEFAULT_LINKS = [
   { label: "Serviços", href: "#services" },
-  { label: "Pilares", href: "#work" },
-  { label: "Método", href: "#process" },
+  { label: "Criadores", href: "#work" },
+  { label: "Próximos passos", href: "#process" },
   { label: "Escopos", href: "#pricing" },
   { label: "Dúvidas", href: "#faq" },
 ]
@@ -195,30 +227,59 @@ const DEFAULT_SERVICES = [
   { title: "Gestão de Crescimento", art: "system", time: "Rotina semanal", text: "Visão macro do negócio: acompanhamento de metas, planejamento de lançamentos de coleção, análise de ticket médio, margem e construção de planos de ação semanais para destravar novos patamares de receita.", tags: ["Lançamentos", "Ticket médio", "Margem líquida", "Planos semanais"] },
 ]
 
-const DEFAULT_CASES = [
-  { client: "Performance Real", mark: "scribe", kind: "Pilar 01", title: "Foco absoluto em ROAS, margem de contribuição e lucro líquido no caixa, não em métricas de vaidade.", metric: "ROAS", metricLabel: "foco em margem e lucro líquido", year: "JAGWAR", mock: "doc", tint: ["#EFE4D4", "#C48F56"] },
-  { client: "Estratégia Inteligente", mark: "slash", kind: "Pilar 02", title: "Decisões guiadas por dados reais da sua loja, comportamento de compra e sazonalidade de coleção.", metric: "BI", metricLabel: "decisões guiadas por dados reais", year: "JAGWAR", mock: "chat", tint: ["#F5F0E8", "#D4A16A"] },
-  { client: "Crescimento Sustentável", mark: "watch", kind: "Pilar 03", title: "Escala previsível que protege o posicionamento e o valor percebido da sua marca de moda.", metric: "LTV", metricLabel: "escala que preserva seu posicionamento", year: "JAGWAR", mock: "dashboard", tint: ["#E5DBCC", "#7A6D57"] },
-  { client: "Parceria de Longo Prazo", mark: "venn", kind: "Pilar 04", title: "Atuação próxima, transparente e comprometida com a maturidade digital do seu e-commerce.", metric: "360°", metricLabel: "operação próxima e transparente", year: "JAGWAR", mock: "mobile", tint: ["#EFE4D4", "#463F32"] },
+const DEFAULT_CASES: OvsCase[] = [
+  {
+    client: "Criação e Gestão de Afiliados e Embaixadores da Marca",
+    icon: "affiliates",
+    badge: "Creator Economy · TikTok Shop",
+    image: "/images/pexels-liza-summer-6347594.jpg",
+    imagePos: "center 22%",
+    kind: "",
+    year: "",
+    title: "Estruturamos seu programa de afiliadas e embaixadoras para transformar criadoras em um canal recorrente de vendas, unindo o alcance da Creator Economy ao potencial explosivo do TikTok Shop.",
+    metric: "TikTok Shop",
+    metricLabel: "afiliadas, comissões e vendas recorrentes",
+    tint: ["#EFE4D4", "#C48F56"],
+  },
+  {
+    client: "Curadoria Creators e Conteúdo",
+    icon: "creators",
+    badge: "Curadoria & Direção UGC",
+    image: "/images/pexels-ben-khatry-430197437-24286930.jpg",
+    imagePos: "center 20%",
+    kind: "",
+    year: "",
+    title: "Selecionamos criadoras alinhadas ao posicionamento da sua marca e conduzimos briefings, roteiros e direção criativa para gerar UGC autêntico que desperta desejo e converte no feed.",
+    metric: "UGC",
+    metricLabel: "curadoria, roteiros e direção criativa",
+    tint: ["#F5F0E8", "#D4A16A"],
+  },
+  {
+    client: "Plataforma JAGWAR OS gratuita",
+    icon: "os",
+    badge: "JAGWAR OS · Aprovações & KPIs",
+    image: "/images/Dashboard premium JAGWAR para aprovações e entregas.png",
+    imagePos: "left top",
+    kind: "",
+    year: "",
+    title: "Plataforma JAGWAR OS gratuita, para auxiliar seu crescimento e acompanhar o andamento do projeto: aprove criativos com um clique, acompanhe entregas e visualize o ROI ao vivo.",
+    metric: "Gratuita",
+    metricLabel: "aprovações, entregas e ROI em tempo real",
+    tint: ["#E5DBCC", "#7A6D57"],
+  },
 ]
 
 const DEFAULT_STEPS = [
-  { name: "Etapa 01", when: "Auditoria", title: "Diagnóstico Profundo", text: "Auditamos suas contas de anúncios, métricas do e-commerce, criativos atuais e pontos de fuga no checkout." },
-  { name: "Etapa 02", when: "90 dias", title: "Plano de Ação & Arquitetura", text: "Desenhamos a estratégia personalizada de tráfego, criativos, CRO e CRM para os próximos 90 dias." },
-  { name: "Etapa 03", when: "Execução", title: "Implementação & Tração", text: "Colocamos as campanhas, novos criativos e otimizações no ar com rastreamento preciso de dados." },
-  { name: "Etapa 04", when: "Contínuo", title: "Otimização Contínua & Escala", text: "Acompanhamento semanal de KPIs, testes A/B constantes e realocação de verba nos produtos e públicos mais lucrativos." },
-]
-
-const DEFAULT_QUOTES = [
-  { quote: "Na moda, vender exige equilíbrio entre estética editorial e precisão matemática. Sem o alinhamento entre criativo, tráfego e experiência de compra na loja, escalar apenas multiplica o prejuízo.", name: "JAGWAR", role: "Visão de Performance", mark: "scribe" },
-  { quote: "Assim como o jaguar — predador silencioso, estratégico e letal na precisão —, atuamos no núcleo da sua operação digital substituindo o achismo por um ecossistema integrado de aquisição, retenção e conversão.", name: "Filosofia JAGWAR", role: "Precisão Cirúrgica", mark: "slash" },
-  { quote: "Vivemos a rotina do e-commerce de moda todos os dias — dominando desde a dinâmica de lançamentos e reposição de grade até a integração entre plataformas, ERP e automações de atendimento.", name: "Ecossistema JAGWAR", role: "Operação de Moda Feminina", mark: "watch" },
+  { name: "Passo 01", when: "Diagnóstico", title: "Configuração & Diagnóstico 360°", text: "Mapeamos sua precificação, contas de mídia, plataforma de e-commerce e gargalos de conversão para identificar as alavancas imediatas de ROI." },
+  { name: "Passo 02", when: "JAGWAR OS", title: "Arquitetura & Acesso ao JAGWAR OS", text: "Liberamos seu acesso gratuito ao JAGWAR OS e desenhamos o plano personalizado unindo tráfego pago, criativos, CRO, fidelização e CRM." },
+  { name: "Passo 03", when: "Tração", title: "Ativação de Mídia & Creator Economy", text: "Colocamos campanhas de performance no ar junto com a curadoria de creators, programa de afiliadas/embaixadoras e operação no TikTok Shop." },
+  { name: "Passo 04", when: "Escala", title: "Gestão de Crescimento & Escala", text: "Acompanhamento semanal de aprovações, entregas e margem no JAGWAR OS, otimizando criativos, conversão e recompra para escalar com previsibilidade." },
 ]
 
 const DEFAULT_PLANS = [
-  { name: "Diagnóstico Estratégico", price: null, text: "Análise gratuita do cenário atual do seu e-commerce para mapear oportunidades reais de crescimento.", features: ["Auditoria de contas Meta & Google Ads", "Leitura do funil e taxa de conversão", "Análise de criativos atuais", "Mapeamento de fuga no checkout"], cta: "Solicitar diagnóstico" },
-  { name: "Assessoria Full Growth", price: null, text: "Atuação integrada nas cinco alavancas para escalar marcas de moda feminina com previsibilidade.", features: ["Gestão de Tráfego Pago (Meta & Google)", "Produção de criativos de alta conversão", "Otimização de CRO e CRM & Retenção", "Gestão de Growth com KPIs semanais"], cta: "Agendar diagnóstico", featured: true, badge: "Estrutura completa" },
-  { name: "Escala & Ecossistema", price: null, text: "Acompanhamento contínuo para marcas em expansão que buscam previsibilidade, margem e LTV.", features: ["Arquitetura personalizada de 90 dias", "Planejamento de lançamentos de coleção", "Integração Shopify, Nuvemshop, ERP e BI", "Testes A/B e realocação de verba"], cta: "Falar com a JAGWAR" },
+  { name: "Diagnóstico Estratégico", price: null, text: "Análise gratuita do cenário atual do seu e-commerce para mapear oportunidades reais de crescimento.", features: ["Auditoria de contas Meta & Google Ads", "Leitura do funil e taxa de conversão", "Análise de criativos atuais", "Mapeamento de fuga no checkout"], cta: "Configurar meu projeto" },
+  { name: "Assessoria Full Growth", price: null, text: "Atuação integrada nas cinco alavancas para escalar marcas de moda feminina com previsibilidade.", features: ["Gestão de Tráfego Pago (Meta & Google)", "Criativos, Creator Economy & TikTok Shop", "Otimização de conversões (CRO) e CRM", "Acesso gratuito ao JAGWAR OS"], cta: "Configurar meu projeto", featured: true, badge: "Estrutura completa" },
+  { name: "Escala & Ecossistema", price: null, text: "Acompanhamento contínuo para marcas em expansão que buscam previsibilidade, margem e LTV.", features: ["Arquitetura personalizada de 90 dias", "Programa de afiliadas e embaixadoras", "Integração Shopify, Nuvemshop, Tray, ERP e BI", "Gestão de Crescimento com KPIs semanais"], cta: "Configurar meu projeto" },
 ]
 
 const DEFAULT_FAQ = [
@@ -233,12 +294,12 @@ const DEFAULT_FAQ = [
 const DEFAULT_CTA = {
   title: "Pronto para elevar o padrão de performance da sua marca?",
   text: "Nossa equipe analisará o cenário atual do seu e-commerce antes da nossa reunião para apresentar oportunidades reais de crescimento.",
-  button: "Quero Meu Diagnóstico Estratégico",
+  button: "Configurar meu projeto",
 }
 
 const DEFAULT_FOOTER = {
   columns: [
-    { title: "Navegação", links: [{ label: "Serviços", href: "#services" }, { label: "Pilares", href: "#work" }, { label: "Método", href: "#process" }, { label: "Escopos", href: "#pricing" }] },
+    { title: "Navegação", links: [{ label: "Serviços", href: "#services" }, { label: "Criadores", href: "#work" }, { label: "Próximos passos", href: "#process" }, { label: "Escopos", href: "#pricing" }] },
     { title: "JAGWAR", links: [{ label: "Parceiros", href: "#about" }, { label: "Dúvidas", href: "#faq" }, { label: "Diagnóstico", href: "#contact" }] },
     { title: "Ecossistema", links: [{ label: "Shopify", href: "#services" }, { label: "Nuvemshop", href: "#services" }, { label: "Meta & Google Ads", href: "#services" }, { label: "CRM & BI", href: "#services" }] },
   ],
@@ -806,52 +867,65 @@ function PhotoCanopy({ src, turn, onReady, onFail }: PhotoProps) {
 
 /* ------------------------------------------------------------------- marks */
 
-function Mark({ kind, uid }: { kind?: OvsMark; uid: string }) {
-  const common = { className: "ovs-svg", viewBox: "0 0 24 24", "aria-hidden": true as const }
-  switch (kind) {
-    case "watch":
-      return (
-        <svg {...common} viewBox="0 0 30 24">
-          <path fill="currentColor" d="M1 4.5h5.4l3.2 9.6 3.1-9.6h4.6l3.1 9.6 3.2-9.6H29L22.6 20h-4.4L15 10.6 11.8 20H7.4z" />
-        </svg>
-      )
-    case "slash":
-      return (
-        <svg {...common}>
-          <defs>
-            <mask id={uid + "sl"}>
-              <rect width="24" height="24" fill="#fff" />
-              <path d="M16.2 7.6c-.9-1-2.3-1.6-4-1.6-2.2 0-3.8 1.1-3.8 2.8 0 1.8 1.6 2.4 3.8 2.9 2.3.5 3.9 1.2 3.9 3.1 0 1.8-1.7 3.1-4 3.1-1.8 0-3.3-.7-4.3-1.9" fill="none" stroke="#000" strokeWidth="2.6" strokeLinecap="round" />
-            </mask>
-          </defs>
-          <rect x="1.5" y="1.5" width="21" height="21" rx="5.5" fill="currentColor" mask={"url(#" + uid + "sl)"} />
-        </svg>
-      )
-    case "scribe":
-      return (
-        <svg {...common}>
-          <circle cx="12" cy="12" r="9.6" fill="none" stroke="currentColor" strokeWidth="1.7" />
-          <path d="M16.6 9.2A5.2 5.2 0 1 0 17 14.6M12 12h5.4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-        </svg>
-      )
-    case "knot":
-      return (
-        <svg {...common}>
-          <path fill="currentColor" d="M12 1.5c2.7 2.8 2.7 5.8 0 8.6-2.7-2.8-2.7-5.8 0-8.6zm0 12.4c2.7 2.8 2.7 5.8 0 8.6-2.7-2.8-2.7-5.8 0-8.6zM1.5 12c2.8-2.7 5.8-2.7 8.6 0-2.8 2.7-5.8 2.7-8.6 0zm12.4 0c2.8-2.7 5.8-2.7 8.6 0-2.8 2.7-5.8 2.7-8.6 0z" />
-        </svg>
-      )
-    case "venn":
-      return (
-        <svg {...common} viewBox="0 0 34 24">
-          <path d="M10 3.5 18.5 12 10 20.5 1.5 12zM24 3.5 32.5 12 24 20.5 15.5 12z" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinejoin="round" />
-        </svg>
-      )
+function ServiceTagIcon({ tag }: { tag: string }) {
+  const props = { className: "ovs-svc-tag-ico", size: 14, strokeWidth: 1.8, "aria-hidden": true as const }
+  switch (tag) {
+    case "Meta Ads":
+      return <Target {...props} />
+    case "Google Ads":
+      return <Search {...props} />
+    case "Curva ABC":
+      return <BarChart3 {...props} />
+    case "Escala por funil":
+      return <TrendingUp {...props} />
+    case "Vídeos nativos":
+      return <Clapperboard {...props} />
+    case "Estáticos":
+      return <ImageIcon {...props} />
+    case "Caimento & estilo":
+      return <Sparkles {...props} />
+    case "Testes criativos":
+      return <FlaskConical {...props} />
+    case "Páginas de produto":
+      return <LayoutTemplate {...props} />
+    case "Vitrines":
+      return <Store {...props} />
+    case "Velocidade":
+      return <Gauge {...props} />
+    case "Checkout":
+      return <ShoppingBag {...props} />
+    case "WhatsApp":
+      return <MessageCircle {...props} />
+    case "E-mail marketing":
+      return <Mail {...props} />
+    case "LTV":
+      return <Repeat {...props} />
+    case "Campanhas de base":
+      return <Users {...props} />
+    case "Lançamentos":
+      return <Rocket {...props} />
+    case "Ticket médio":
+      return <BadgeDollarSign {...props} />
+    case "Margem líquida":
+      return <Percent {...props} />
+    case "Planos semanais":
+      return <CalendarCheck {...props} />
     default:
-      return (
-        <svg {...common}>
-          <path fill="currentColor" d="M20 3.5C11 3.6 4.5 8.4 4.5 15c0 1.8.5 3.4 1.4 4.6L3.6 22l1.1 1 2.3-2.3c1.3.9 2.9 1.4 4.6 1.4 6.6 0 9.6-7.6 8.4-18.6zM9 17.6c2.4-3.6 5-6.1 8.3-8.2-2.6 2.6-4.9 5.3-7.2 9z" />
-        </svg>
-      )
+      return <Sparkles {...props} />
+  }
+}
+
+function CreatorCardIcon({ icon }: { icon?: OvsCase["icon"] }) {
+  const props = { className: "ovs-card-ico", size: 18, strokeWidth: 1.8, "aria-hidden": true as const }
+  switch (icon) {
+    case "affiliates":
+      return <Crown {...props} />
+    case "creators":
+      return <Clapperboard {...props} />
+    case "os":
+      return <LayoutDashboard {...props} />
+    default:
+      return <Sparkles {...props} />
   }
 }
 
@@ -984,33 +1058,6 @@ function Kicker({ text }: { n?: string; text: string }) {
   )
 }
 
-function Arrow() {
-  return (
-    <svg className="ovs-svg ovs-arrow" viewBox="0 0 16 16" aria-hidden="true">
-      <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-/** A button that leans toward the pointer. */
-function Magnet({ children, className, onClick, href, label }: { children: React.ReactNode; className: string; onClick?: (e: React.MouseEvent) => void; href?: string; label?: string }) {
-  const ref = React.useRef(null as HTMLAnchorElement | null)
-  const move = (e: React.PointerEvent) => {
-    const el = ref.current
-    if (!el || e.pointerType !== "mouse") return
-    const r = el.getBoundingClientRect()
-    gsap.to(el, { x: (e.clientX - r.left - r.width / 2) * 0.22, y: (e.clientY - r.top - r.height / 2) * 0.32, duration: 0.4, ease: "power3.out" })
-  }
-  const leave = () => {
-    if (ref.current) gsap.to(ref.current, { x: 0, y: 0, duration: 0.8, ease: "elastic.out(1,0.45)" })
-  }
-  return (
-    <a ref={ref} href={href || "#contact"} className={className} onClick={onClick} onPointerMove={move} onPointerLeave={leave} aria-label={label}>
-      {children}
-    </a>
-  )
-}
-
 /* ------------------------------------------------------- service previews */
 
 const SERVICE_IMAGES: Record<OvsServiceArt, string> = {
@@ -1032,89 +1079,6 @@ function ServiceArt({ art }: { art?: OvsServiceArt }) {
       height={320}
       className="ovs-svc-img"
     />
-  )
-}
-
-/* -------------------------------------------------------------- case mocks */
-
-function CaseMock({ mock, name }: { mock?: OvsMock; name: string }) {
-  if (mock === "mobile")
-    return (
-      <div className="ovs-mock ovs-mock-phone" data-mock>
-        <div className="ovs-phone-notch" />
-        <p className="ovs-mk-sm">LTV & Recompra</p>
-        <p className="ovs-mk-big">360°</p>
-        <div className="ovs-phone-split">
-          <span style={{ width: "58%" }} />
-          <span style={{ width: "42%" }} />
-        </div>
-        {["WhatsApp", "E-mail", "Lançamentos"].map((t, i) => (
-          <div className="ovs-mk-row" key={t}>
-            <i style={{ background: ["var(--ovs-accent)", "#463F32", "#A39B8F"][i] }} />
-            <span>{t}</span>
-            <b>{["Fluxo", "Base", "Grade"][i]}</b>
-          </div>
-        ))}
-      </div>
-    )
-  return (
-    <div className="ovs-mock" data-mock>
-      <div className="ovs-mk-bar">
-        <i />
-        <i />
-        <i />
-        <span>{name.toLowerCase().replace(/\s+/g, "-")}.jagwar</span>
-      </div>
-      <div className="ovs-mk-body">
-        <div className="ovs-mk-side">
-          {[0, 1, 2, 3, 4].map((i) => (
-            <span key={i} data-on={i === 1 ? "" : undefined} />
-          ))}
-        </div>
-        {mock === "chat" ? (
-          <div className="ovs-mk-main">
-            <div className="ovs-bubble">Curva ABC atualizada: peças-desejo puxando margem e recompra.</div>
-            <div className="ovs-bubble ovs-bubble-me">Realocar verba nas campeãs e novos criativos?</div>
-            <div className="ovs-bubble">Sim. Funil alinhado para escalar com previsibilidade.</div>
-            <div className="ovs-mk-wave">
-              {Array.from({ length: 28 }, (_, i) => (
-                <i key={i} style={{ height: 6 + Math.abs(Math.sin(i * 1.7)) * 22 + "px" }} />
-              ))}
-            </div>
-          </div>
-        ) : mock === "doc" ? (
-          <div className="ovs-mk-main">
-            <p className="ovs-mk-sm">Diagnóstico de performance</p>
-            <p className="ovs-mk-h">Plano de ação — 90 dias</p>
-            {[92, 78, 86, 60].map((w, i) => (
-              <span className="ovs-mk-line" key={i} style={{ width: w + "%" }} />
-            ))}
-            <div className="ovs-mk-chips">
-              <span>ROAS & Margem</span>
-              <span>Funil validado</span>
-            </div>
-            {[70, 84].map((w, i) => (
-              <span className="ovs-mk-line" key={i} style={{ width: w + "%" }} />
-            ))}
-          </div>
-        ) : (
-          <div className="ovs-mk-main">
-            <div className="ovs-mk-kpis">
-              {[["Aquisição", "Ads"], ["Conversão", "CRO"], ["Retenção", "CRM"]].map((k) => (
-                <div key={k[0]}>
-                  <span>{k[0]}</span>
-                  <b>{k[1]}</b>
-                </div>
-              ))}
-            </div>
-            <svg className="ovs-svg ovs-mk-chart" viewBox="0 0 300 110" preserveAspectRatio="none" aria-hidden="true">
-              <path d="M0 90 C 30 84, 50 70, 80 74 S 130 50, 160 54 S 210 30, 240 28 S 280 14, 300 10 V110 H0z" fill="var(--ovs-soft)" opacity="0.5" />
-              <path d="M0 90 C 30 84, 50 70, 80 74 S 130 50, 160 54 S 210 30, 240 28 S 280 14, 300 10" fill="none" stroke="var(--ovs-accent)" strokeWidth="2.5" />
-            </svg>
-          </div>
-        )}
-      </div>
-    </div>
   )
 }
 
@@ -1232,7 +1196,6 @@ export default function OverstoryStudioLanding({
   services,
   work,
   process,
-  quotes = DEFAULT_QUOTES as OvsQuote[],
   pricing,
   faq,
   cta = DEFAULT_CTA,
@@ -1260,12 +1223,12 @@ export default function OverstoryStudioLanding({
     items: services?.items || (DEFAULT_SERVICES as OvsService[]),
   }
   const wk = work === null ? null : {
-    kicker: work?.kicker || "Precisão cirúrgica",
-    title: work?.title || "Não corremos atrás de cliques. Damos o bote certo na audiência qualificada.",
+    kicker: work?.kicker || "Conecte-se com criadores",
+    title: work?.title || "Conectamos sua marca com criadores de conteúdo para surfarmos a onda da Creator Economy",
     next: work?.next || "Sua marca, no próximo nível",
     items: work?.items || (DEFAULT_CASES as OvsCase[]),
   }
-  const pr = process === null ? null : { kicker: process?.kicker || "Roadmap de execução", title: process?.title || "Do diagnóstico à escala em 4 etapas claras.", steps: process?.steps || DEFAULT_STEPS }
+  const pr = process === null ? null : { kicker: process?.kicker || "Próximos passos", title: process?.title || "Da configuração do seu projeto à escala previsível em 4 passos.", steps: process?.steps || DEFAULT_STEPS }
   const pc = pricing === null ? null : {
     kicker: pricing?.kicker || "Para quem é a JAGWAR",
     title: pricing?.title || "Desenhada para marcas de moda que buscam maturidade digital.",
@@ -1293,8 +1256,6 @@ export default function OverstoryStudioLanding({
   const [svcHover, setSvcHover] = React.useState(0)
   const [quarterly, setQuarterly] = React.useState(false)
   const [faqOpen, setFaqOpen] = React.useState(0)
-  const [quote, setQuote] = React.useState(0)
-  const [quotePaused, setQuotePaused] = React.useState(false)
   const [copied, setCopied] = React.useState(false)
   const [mail, setMail] = React.useState("")
   const [mailState, setMailState] = React.useState("idle" as "idle" | "sending" | "done" | "error" | "invalid")
@@ -1332,10 +1293,11 @@ export default function OverstoryStudioLanding({
   }, [])
 
   const book = (from: string) => (e: React.MouseEvent) => {
+    setMenu(false)
     if (onBook) {
       e.preventDefault()
       onBook(from)
-    } else go("#contact")(e)
+    }
   }
 
   // nav: solid once you leave the top, hides while you scroll down, active link follows the section in view
@@ -1671,16 +1633,6 @@ export default function OverstoryStudioLanding({
     heroIn.current?.()
   }, [])
 
-  // quotes: words rise on every change
-  useIso(() => {
-    if (still || !root.current) return
-    const ws = root.current.querySelectorAll("[data-quote] [data-qw]")
-    const t = gsap.fromTo(ws, { yPercent: 110, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1, stagger: 0.02, ease: "expo.out" })
-    return () => {
-      t.kill()
-    }
-  }, [quote, still])
-
   const copyEmail = () => {
     const done = () => {
       setCopied(true)
@@ -1708,8 +1660,6 @@ export default function OverstoryStudioLanding({
     if (ok) setMail("")
   }
 
-  const qs = quotes || []
-  const curQuote = qs[quote % Math.max(1, qs.length)]
   const svcItems = svc?.items || []
   const style = {
     "--ovs-h": height,
@@ -1767,10 +1717,13 @@ export default function OverstoryStudioLanding({
                 </svg>
               </button>
             ) : null}
-            <Magnet className="ovs-btn ovs-btn-dark ovs-nav-cta" href="#contact" onClick={book("nav")}>
-              <span>Agendar Diagnóstico</span>
-              <Arrow />
-            </Magnet>
+            <GlassmorphismCta
+              label="Configurar meu projeto"
+              size="sm"
+              className="ovs-nav-cta"
+              href="/configurar-projeto"
+              onClick={book("nav")}
+            />
             <button ref={menuBtn} type="button" className="ovs-icon-btn ovs-burger" aria-expanded={menu} aria-controls={uid + "menu"} aria-label="Menu" onClick={() => setMenu((m) => !m)}>
               <span />
               <span />
@@ -1785,9 +1738,13 @@ export default function OverstoryStudioLanding({
             {l.label}
           </a>
         ))}
-        <a href="#contact" className="ovs-btn ovs-btn-dark" onClick={book("menu")} style={{ "--i": links.length } as React.CSSProperties}>
-          Agendar Diagnóstico <Arrow />
-        </a>
+        <GlassmorphismCta
+          label="Configurar meu projeto"
+          className="ovs-sheet-cta"
+          href="/configurar-projeto"
+          onClick={book("menu")}
+          style={{ "--i": links.length } as React.CSSProperties}
+        />
       </div>
 
       <main id={uid + "main"}>
@@ -1991,7 +1948,10 @@ export default function OverstoryStudioLanding({
                             <p>{s.text}</p>
                             <ul>
                               {s.tags.map((t) => (
-                                <li key={t}>{t}</li>
+                                <li key={t}>
+                                  <ServiceTagIcon tag={t} />
+                                  <span>{t}</span>
+                                </li>
                               ))}
                             </ul>
                           </div>
@@ -2027,19 +1987,33 @@ export default function OverstoryStudioLanding({
               </div>
               <div className="ovs-track" data-track>
                 {wk.items.map((c, i) => (
-                  <article key={c.client + i} className="ovs-card" data-card style={{ "--t1": (c.tint || ["#dfe8d6", "#9fbf7a"])[0], "--t2": (c.tint || ["#dfe8d6", "#9fbf7a"])[1] } as React.CSSProperties}>
+                  <article key={c.client + i} className="ovs-card" data-card style={{ "--t1": (c.tint || ["#EFE4D4", "#C48F56"])[0], "--t2": (c.tint || ["#EFE4D4", "#C48F56"])[1] } as React.CSSProperties}>
                     <a href={c.href || "#contact"} onClick={c.href ? undefined : go("#contact")} className="ovs-card-link" aria-label={c.client + ": " + c.title}>
-                      <div className="ovs-card-art">
-                        <span className="ovs-card-sun" />
-                        <CaseMock mock={c.mock} name={c.client} />
+                      <div className="ovs-card-art ovs-card-art-photo">
+                        {c.image ? (
+                          <Image
+                            src={c.image}
+                            alt={c.client}
+                            fill
+                            sizes="(max-width: 820px) 100vw, 760px"
+                            className="ovs-card-photo"
+                            style={{ objectPosition: c.imagePos || "center" }}
+                          />
+                        ) : null}
+                        <span className="ovs-card-scrim" aria-hidden="true" />
+                        {c.badge ? (
+                          <span className="ovs-card-pill">
+                            <CreatorCardIcon icon={c.icon} />
+                            <span>{c.badge}</span>
+                          </span>
+                        ) : null}
                       </div>
                       <div className="ovs-card-meta">
                         <p className="ovs-card-client">
-                          <Mark kind={c.mark} uid={uid + "c" + i} />
-                          {c.client}
-                          <span>
-                            {c.kind} · {c.year}
+                          <span className="ovs-card-ico-box" aria-hidden="true">
+                            <CreatorCardIcon icon={c.icon} />
                           </span>
+                          <span>{c.client}</span>
                         </p>
                         <h3 className="ovs-card-title">{c.title}</h3>
                         <p className="ovs-card-metric">
@@ -2060,13 +2034,11 @@ export default function OverstoryStudioLanding({
                     className="ovs-card-next-bg"
                   />
                   <span className="ovs-card-next-scrim" aria-hidden="true" />
-                  <a href="#contact" onClick={book("work")} className="ovs-card-link">
+                  <Link href="/configurar-projeto" onClick={book("work")} className="ovs-card-link">
                     <BrandMark />
                     <span className="ovs-card-next-t">{wk.next}</span>
-                    <span className="ovs-btn ovs-btn-dark">
-                      Solicitar Diagnóstico <Arrow />
-                    </span>
-                  </a>
+                    <GlassmorphismCta asSpan label="Configurar meu projeto" />
+                  </Link>
                 </article>
               </div>
             </div>
@@ -2105,66 +2077,53 @@ export default function OverstoryStudioLanding({
           </section>
         ) : null}
 
-        {/* --------------------------------------------------------- quotes */}
-        {curQuote ? (
-          <section className="ovs-shade" data-sec="quotes" aria-label="Visão JAGWAR" onPointerEnter={() => setQuotePaused(true)} onPointerLeave={() => setQuotePaused(false)} onFocus={() => setQuotePaused(true)} onBlur={() => setQuotePaused(false)}>
-            {usePhoto ? <div className="ovs-shade-photo" aria-hidden="true" style={{ backgroundImage: "url(" + photo + ")" }} /> : null}
-            <div className="ovs-dapple" aria-hidden="true">
-              <i />
-              <i />
-              <i />
-              <i />
-            </div>
-            <div className="ovs-wrap ovs-quote-wrap">
-              <p className="ovs-kicker ovs-kicker-light" data-rv>
-                <span className="ovs-kicker-n">( ✦ )</span>
-                <span>Operação real, não apenas teoria</span>
-              </p>
-              <figure className="ovs-quote" data-quote aria-live="polite">
-                <blockquote>
-                  <p>
-                    {curQuote.quote.split(" ").map((w, i) => (
-                      <React.Fragment key={quote + "-" + i}>
-                        <span className="ovs-w">
-                          <span data-qw>{w}</span>
-                        </span>{" "}
-                      </React.Fragment>
-                    ))}
-                  </p>
-                </blockquote>
-                <figcaption>
-                  <span className="ovs-avatar">{curQuote.name.split(" ").map((p) => p[0]).join("").slice(0, 2)}</span>
-                  <span>
-                    <b>{curQuote.name}</b>
-                    <span>{curQuote.role}</span>
-                  </span>
-                  <span className="ovs-quote-mark">
-                    <Mark kind={curQuote.mark} uid={uid + "q"} />
-                  </span>
-                </figcaption>
-              </figure>
-              {qs.length > 1 ? (
-                <div className="ovs-quote-nav">
-                  <button type="button" className="ovs-round" aria-label="Citação anterior" onClick={() => setQuote((v) => (v - 1 + qs.length) % qs.length)}>
-                    <svg className="ovs-svg" viewBox="0 0 16 16" aria-hidden="true">
-                      <path d="M13 8H3m4-4L3 8l4 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                  <div className="ovs-dots">
-                    {qs.map((qq, i) => (
-                      <button key={qq.name} type="button" aria-label={"Citação " + (i + 1) + " de " + qs.length} aria-current={i === quote ? "true" : undefined} onClick={() => setQuote(i)}>
-                        {i === quote ? <i key={quote} data-paused={quotePaused ? "" : undefined} onAnimationEnd={() => setQuote((v) => (v + 1) % qs.length)} /> : null}
-                      </button>
-                    ))}
-                  </div>
-                  <button type="button" className="ovs-round" aria-label="Próxima citação" onClick={() => setQuote((v) => (v + 1) % qs.length)}>
-                    <Arrow />
-                  </button>
+        {/* --------------------------------------------------------- cta-band */}
+        <section className="ovs-cta-band" data-sec="quotes" aria-labelledby={uid + "ctab"}>
+          <div className="ovs-wrap">
+            <div className="ovs-cta-card" data-rv>
+              <div className="ovs-dapple" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+                <i />
+              </div>
+              <div className="ovs-cta-card-in">
+                <p className="ovs-kicker ovs-kicker-light">
+                  <span>Operação real, não apenas teoria</span>
+                </p>
+                <h2 id={uid + "ctab"} className="ovs-cta-h">
+                  Sua marca pronta para escalar com{" "}
+                  <em className="ovs-cta-accent">previsibilidade e ROI comprovado.</em>
+                </h2>
+                <p className="ovs-cta-p">
+                  Chega de investir sem clareza no retorno. Configure seu projeto com a JAGWAR, conecte sua loja à Creator Economy e acompanhe cada aprovação, entrega e resultado ao vivo no JAGWAR OS gratuito.
+                </p>
+                <ul className="ovs-cta-chips" aria-label="Diferenciais inclusos">
+                  <li>
+                    <CheckCircle2 size={15} strokeWidth={1.8} aria-hidden="true" />
+                    <span>JAGWAR OS 100% gratuito</span>
+                  </li>
+                  <li>
+                    <CheckCircle2 size={15} strokeWidth={1.8} aria-hidden="true" />
+                    <span>Creator Economy &amp; TikTok Shop</span>
+                  </li>
+                  <li>
+                    <CheckCircle2 size={15} strokeWidth={1.8} aria-hidden="true" />
+                    <span>Estratégia orientada a ROI</span>
+                  </li>
+                </ul>
+                <div className="ovs-cta-act">
+                  <GlassmorphismCta
+                    label="Configurar meu projeto"
+                    size="lg"
+                    href="/configurar-projeto"
+                    onClick={book("cta-band")}
+                  />
                 </div>
-              ) : null}
+              </div>
             </div>
-          </section>
-        ) : null}
+          </div>
+        </section>
 
         {/* -------------------------------------------------------- pricing */}
         {pc ? (
@@ -2229,9 +2188,12 @@ export default function OverstoryStudioLanding({
                             </li>
                           ))}
                         </ul>
-                        <a href="#contact" className={"ovs-btn " + (p.featured ? "ovs-btn-lime" : "ovs-btn-line")} onClick={book("plan:" + p.name)}>
-                          {p.cta} <Arrow />
-                        </a>
+                        <GlassmorphismCta
+                          label="Configurar meu projeto"
+                          className="ovs-plan-cta"
+                          href="/configurar-projeto"
+                          onClick={book("plan:" + p.name)}
+                        />
                       </div>
                     </div>
                   )
@@ -2293,16 +2255,21 @@ export default function OverstoryStudioLanding({
                   </h2>
                   <p>{cta.text || DEFAULT_CTA.text}</p>
                   <div className="ovs-fin-actions">
-                    <Magnet className="ovs-btn ovs-btn-dark ovs-btn-xl" href={"mailto:" + email} onClick={onBook ? book("finale") : undefined}>
-                      <span>{cta.button || DEFAULT_CTA.button}</span>
-                      <Arrow />
-                    </Magnet>
-                    <button type="button" className="ovs-btn ovs-btn-glass ovs-btn-xl" onClick={copyEmail}>
-                      <span aria-live="polite">{copied ? "Copiado" : email}</span>
-                      <svg className="ovs-svg ovs-arrow" viewBox="0 0 16 16" aria-hidden="true">
-                        {copied ? <path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /> : <path d="M5.5 5.5V3.5h7v7h-2M3.5 5.5h7v7h-7z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />}
-                      </svg>
-                    </button>
+                    <GlassmorphismCta
+                      label="Configurar meu projeto"
+                      size="lg"
+                      href="/configurar-projeto"
+                      onClick={book("finale")}
+                    />
+                    <a
+                      href={buildWhatsAppUrl("Olá! Vim pelo site da JAGWAR e gostaria de falar sobre o meu e-commerce.")}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ovs-btn ovs-btn-glass ovs-btn-xl"
+                    >
+                      <WhatsAppIcon size={18} />
+                      <span>Falar no WhatsApp</span>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -2425,7 +2392,7 @@ const OVS_CSS = `
 .ovs-root[data-scheme="dark"] .ovs-nav-in{background:rgba(10,10,9,.44);border-color:rgba(239,228,212,.14)}
 .ovs-root[data-solid] .ovs-nav-in{background:color-mix(in oklab,var(--ovs-paper) 78%,transparent);border-color:var(--ovs-line);box-shadow:0 10px 40px -18px rgba(10,10,9,.35);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);color:var(--ovs-ink)}
 .ovs-root[data-photo]:not([data-solid]):not([data-menu]) .ovs-nav-in{background:transparent;border-color:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;color:#F5F0E8;text-shadow:0 1px 14px rgba(0,0,0,.35)}
-.ovs-root[data-photo]:not([data-solid]):not([data-menu]) .ovs-nav-cta{background:#F5F0E8;color:#0A0A09;text-shadow:none}
+.ovs-root[data-photo]:not([data-solid]):not([data-menu]) .ovs-nav-cta{text-shadow:none}
 .ovs-root[data-photo]:not([data-solid]):not([data-menu]) .ovs-links{background:rgba(10,10,9,.32);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);box-shadow:inset 0 0 0 1px rgba(239,228,212,.18)}
 .ovs-root[data-photo]:not([data-solid]):not([data-menu]) .ovs-links a{opacity:.92}
 .ovs-root[data-photo]:not([data-solid]):not([data-menu]) .ovs-links a[data-on]{background:rgba(239,228,212,.18)}
@@ -2452,7 +2419,7 @@ const OVS_CSS = `
 .ovs-sheet[hidden]{display:none}
 .ovs-sheet a{font-size:clamp(34px,9vw,52px);font-weight:500;letter-spacing:-.04em;display:flex;align-items:baseline;gap:14px;animation:ovs-in .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i) * 60ms)}
 .ovs-sheet a span{font-size:13px;letter-spacing:0;color:var(--ovs-ink2)}
-.ovs-sheet .ovs-btn{font-size:16px;letter-spacing:0;margin-top:24px;align-self:flex-start}
+.ovs-sheet .ovs-btn,.ovs-sheet .ovs-sheet-cta{font-size:16px;letter-spacing:0;margin-top:24px;align-self:flex-start}
 @keyframes ovs-in{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
 
 /* buttons */
@@ -2623,7 +2590,9 @@ const OVS_CSS = `
 .ovs-svc-body{display:grid;grid-template-columns:70px 1fr;gap:20px;padding:0 10px 34px}
 .ovs-svc-body p{grid-column:2;font-size:clamp(16px,1.3vw,19px);color:var(--ovs-ink2);max-width:34em}
 .ovs-svc-body ul{grid-column:2;display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
-.ovs-svc-body li{font-size:13.5px;padding:6px 13px;border-radius:999px;background:var(--ovs-card);border:1px solid var(--ovs-line)}
+.ovs-svc-body li{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;padding:6px 13px;border-radius:999px;background:var(--ovs-card);border:1px solid var(--ovs-line)}
+.ovs-svc-tag-ico{color:var(--ovs-accent);flex:none}
+.ovs-root[data-scheme="dark"] .ovs-svc-tag-ico{color:var(--ovs-soft)}
 
 /* work */
 .ovs-work{position:relative;background:var(--ovs-paper)}
@@ -2641,19 +2610,27 @@ const OVS_CSS = `
 .ovs-card{flex:none;display:flex;flex-direction:column;width:100%;border-radius:28px;overflow:hidden;background:var(--ovs-card);border:1px solid var(--ovs-line);transform-origin:50% 100%}
 .ovs-work[data-h] .ovs-card{width:min(64vw,760px);height:min(calc(var(--ovs-h) - 370px),540px);min-height:360px}
 .ovs-card-link{display:flex;flex-direction:column;flex:1;min-height:0}
-.ovs-card-art{position:relative;flex:1;min-height:260px;overflow:hidden;background:radial-gradient(120% 90% at 80% 10%,var(--t1),var(--t2));display:flex;align-items:center;justify-content:center;padding:28px}
+.ovs-card-art{position:relative;flex:1;min-height:240px;overflow:hidden;background:radial-gradient(120% 90% at 80% 10%,var(--t1),var(--t2));display:flex;align-items:center;justify-content:center;padding:28px}
+.ovs-card-art-photo{padding:0;background:#141312}
+.ovs-card-photo{object-fit:cover;transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+.ovs-card:hover .ovs-card-photo{transform:scale(1.045)}
+.ovs-card-scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(10,10,9,.08) 0%,rgba(10,10,9,.18) 58%,rgba(10,10,9,.68) 100%)}
+.ovs-card-pill{position:absolute;left:20px;bottom:18px;z-index:2;display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;font-size:12px;font-weight:550;letter-spacing:.02em;color:#F5F0E8;background:rgba(10,10,9,.62);border:1px solid rgba(216,173,123,.32);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.ovs-card-pill .ovs-card-ico{width:14px;height:14px;color:var(--ovs-soft)}
 .ovs-root[data-scheme="dark"] .ovs-card-art{background:radial-gradient(120% 90% at 80% 10%,color-mix(in oklab,var(--t2) 60%,#000),color-mix(in oklab,var(--t2) 22%,#000))}
 .ovs-card-sun{position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(rgba(255,255,255,.75),transparent 70%);transition:transform 1.2s cubic-bezier(.2,.8,.2,1)}
 .ovs-card:hover .ovs-card-sun{transform:translate(-40px,30px) scale(1.3)}
-.ovs-card-meta{display:grid;grid-template-columns:1fr auto;gap:8px 30px;padding:22px 26px 24px;align-items:end}
-.ovs-card-client{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px}
-.ovs-card-client .ovs-svg{height:18px;width:auto}
-.ovs-card-client span{font-weight:400;color:var(--ovs-ink2);margin-left:6px;font-size:14px}
-.ovs-card-title{font-size:clamp(19px,1.7vw,24px);letter-spacing:-.03em;font-weight:500;line-height:1.2;max-width:22em}
-.ovs-card-metric{text-align:right;display:flex;flex-direction:column;align-items:flex-end}
-.ovs-card-metric b{font-size:clamp(30px,3vw,44px);letter-spacing:-.05em;font-weight:500;line-height:1;color:var(--ovs-accent)}
+.ovs-card-meta{display:grid;grid-template-columns:1fr auto;gap:10px 26px;padding:22px 26px 24px;align-items:end}
+.ovs-card-client{grid-column:1/-1;display:flex;align-items:center;gap:10px;font-weight:600;font-size:16px;line-height:1.25}
+.ovs-card-ico-box{width:32px;height:32px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;flex:none;background:color-mix(in oklab,var(--ovs-accent) 14%,transparent);border:1px solid color-mix(in oklab,var(--ovs-accent) 32%,transparent)}
+.ovs-root[data-scheme="dark"] .ovs-card-ico-box{background:rgba(216,173,123,.12);border-color:rgba(216,173,123,.28)}
+.ovs-card-ico{color:var(--ovs-accent);flex:none}
+.ovs-root[data-scheme="dark"] .ovs-card-ico{color:var(--ovs-soft)}
+.ovs-card-title{font-size:clamp(15px,1.2vw,17.5px);letter-spacing:-.015em;font-weight:450;line-height:1.45;color:var(--ovs-ink2);max-width:34em}
+.ovs-card-metric{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.ovs-card-metric b{font-size:clamp(22px,2.1vw,30px);letter-spacing:-.04em;font-weight:600;line-height:1.05;color:var(--ovs-accent);white-space:nowrap}
 .ovs-root[data-scheme="dark"] .ovs-card-metric b{color:var(--ovs-soft)}
-.ovs-card-metric span{font-size:12.5px;color:var(--ovs-ink2);max-width:15em}
+.ovs-card-metric span{font-size:12px;color:var(--ovs-ink2);max-width:16em}
 .ovs-card-next{position:relative;background:#0A0A09;color:#FFFFFF;border-color:rgba(239,228,212,.16)}
 .ovs-work[data-h] .ovs-card-next{width:min(40vw,440px)}
 .ovs-card-next-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform 1.1s cubic-bezier(.2,.8,.2,1)}
@@ -2716,10 +2693,18 @@ const OVS_CSS = `
 .ovs-step h3{font-size:clamp(34px,3.8vw,56px);letter-spacing:-.045em;font-weight:500;line-height:1}
 .ovs-step p:last-child{font-size:clamp(16px,1.3vw,19px);color:var(--ovs-ink2);max-width:28em}
 
-/* quotes */
-.ovs-shade{position:relative;overflow:hidden;background:var(--ovs-forest);color:#F5F0E8;padding:clamp(100px,13vw,180px) 0}
-.ovs-shade-photo{position:absolute;inset:-6%;background-size:cover;background-position:center;filter:blur(2px) brightness(.36);pointer-events:none}
-.ovs-shade::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,var(--ovs-forest),color-mix(in oklab,var(--ovs-forest) 40%,transparent) 30%,color-mix(in oklab,var(--ovs-forest) 55%,transparent) 70%,var(--ovs-forest));pointer-events:none}
+/* persuasive high-contrast cta band */
+.ovs-cta-band{position:relative;overflow:hidden;background:#FFFFFF;padding:clamp(76px,10vw,136px) 0}
+.ovs-cta-band::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(60% 80% at 15% 15%,rgba(239,228,212,.55),transparent 65%),radial-gradient(55% 75% at 88% 85%,rgba(196,143,86,.18),transparent 65%)}
+.ovs-cta-card{position:relative;overflow:hidden;border-radius:32px;background:#0A0A09;color:#F5F0E8;border:1px solid rgba(216,173,123,.28);box-shadow:0 36px 90px -28px rgba(10,10,9,.45),0 0 0 1px rgba(196,143,86,.14);padding:clamp(48px,7vw,92px) clamp(24px,5vw,76px);text-align:center}
+.ovs-cta-card-in{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;max-width:860px;margin:0 auto}
+.ovs-cta-h{font-size:clamp(30px,4.4vw,60px);line-height:1.06;letter-spacing:-.042em;font-weight:500;color:#F5F0E8;text-wrap:balance}
+.ovs-cta-accent{font-style:normal;color:#D8AD7B}
+.ovs-cta-p{margin-top:22px;font-size:clamp(16px,1.35vw,19.5px);line-height:1.58;color:rgba(245,240,232,.78);max-width:36em;text-wrap:balance}
+.ovs-cta-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:28px}
+.ovs-cta-chips li{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;font-size:13px;font-weight:500;color:rgba(245,240,232,.88);background:rgba(245,240,232,.05);border:1px solid rgba(216,173,123,.22)}
+.ovs-cta-chips svg{color:#D8AD7B;flex:none}
+.ovs-cta-act{margin-top:34px;display:flex;justify-content:center}
 .ovs-dapple{position:absolute;inset:0;pointer-events:none;z-index:1}
 .ovs-dapple i{position:absolute;border-radius:50%;filter:blur(50px);background:radial-gradient(var(--ovs-soft),transparent 65%);opacity:.22;mix-blend-mode:screen;animation:ovs-dap 18s ease-in-out infinite alternate}
 .ovs-dapple i:nth-child(1){width:520px;height:420px;left:-120px;top:-120px}
@@ -2727,25 +2712,6 @@ const OVS_CSS = `
 .ovs-dapple i:nth-child(3){width:300px;height:260px;left:35%;bottom:-80px;animation-duration:15s}
 .ovs-dapple i:nth-child(4){width:200px;height:200px;right:30%;top:-40px;animation-duration:12s;opacity:.3}
 @keyframes ovs-dap{0%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,40px) scale(1.15)}100%{transform:translate(-40px,70px) scale(.9)}}
-.ovs-quote-wrap{position:relative;z-index:2}
-.ovs-quote blockquote p{font-size:clamp(28px,3.9vw,58px);line-height:1.12;letter-spacing:-.04em;font-weight:500;max-width:20em;min-height:3.4em}
-.ovs-quote figcaption{display:flex;align-items:center;gap:16px;margin-top:clamp(34px,4vw,52px);font-size:15px}
-.ovs-quote figcaption>span:nth-child(2){display:flex;flex-direction:column}
-.ovs-quote figcaption b{font-weight:600}
-.ovs-quote figcaption>span:nth-child(2)>span{color:rgba(245,240,232,.65)}
-.ovs-avatar{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--ovs-soft),var(--ovs-accent));color:#0A0A09;font-weight:700;letter-spacing:-.02em}
-.ovs-quote-mark{margin-left:18px;padding-left:18px;border-left:1px solid rgba(245,240,232,.2);opacity:.75}
-.ovs-quote-mark .ovs-svg{height:24px;width:auto}
-.ovs-quote-nav{display:flex;align-items:center;gap:18px;margin-top:clamp(40px,5vw,64px)}
-.ovs-round{width:50px;height:50px;border-radius:50%;border:1px solid rgba(245,240,232,.25);display:grid;place-items:center;transition:background .3s,color .3s}
-.ovs-round:hover{background:#F5F0E8;color:#0A0A09}
-.ovs-round .ovs-svg{width:16px;height:16px}
-.ovs-dots{display:flex;gap:8px}
-.ovs-dots button{position:relative;width:46px;height:3px;border-radius:3px;background:rgba(245,240,232,.22);overflow:hidden}
-.ovs-dots button[aria-current]{background:rgba(245,240,232,.35)}
-.ovs-dots i{position:absolute;inset:0;background:var(--ovs-soft);transform-origin:0 50%;animation:ovs-prog 7s linear forwards}
-.ovs-dots i[data-paused]{animation-play-state:paused}
-@keyframes ovs-prog{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 
 /* pricing */
 .ovs-seg{position:relative;display:inline-flex;padding:4px;border-radius:999px;background:var(--ovs-card);border:1px solid var(--ovs-line)}
@@ -2773,7 +2739,8 @@ const OVS_CSS = `
 .ovs-plan li{display:flex;gap:10px;font-size:14.5px;align-items:flex-start}
 .ovs-plan li .ovs-svg{width:16px;height:16px;margin-top:3px;color:var(--ovs-accent)}
 .ovs-root[data-scheme="dark"] .ovs-plan li .ovs-svg,.ovs-plan[data-featured] li .ovs-svg{color:var(--ovs-soft)}
-.ovs-plan .ovs-btn{width:100%;height:50px}
+.ovs-plan .ovs-btn,.ovs-plan .ovs-plan-cta{width:100%}
+.ovs-plan .ovs-btn{height:50px}
 .ovs-plan[data-featured] .ovs-btn-line{border-color:rgba(245,240,232,.3)}
 
 /* faq */
